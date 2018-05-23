@@ -1,5 +1,6 @@
 from Queen import Queen
 import math
+import timeit
 
 # def runtime(n, i):
     
@@ -62,18 +63,47 @@ def checkRow(queens, row, n):
     return actualresults          
 
 
-def heuristic1(actualResults, i, n):
-    print("Actual Results: ")
-    print(actualResults)
+def heuristic1(actualResults, i, n, qlist):
+#    print("Actual Results: ")
+#    print(actualResults)
 
     if(len(actualResults) >= 2):
-        if(abs(actualResults[0] - queenList[i - 1].x) < abs(actualResults[-1] - queenList[i-1].x)):
+        if(abs(actualResults[0] - qlist[i - 1].x) < abs(actualResults[-1] - qlist[i-1].x)):
             actualResults.reverse()
     return actualResults
 
 
+def heuristic2(results, row, n, qlist):
+    
+#    print("Actual Results: ")
+#    print(results)
+    
+    scores = []
+    finalscores = []
+    for r in results:
+        scores.append(0)
+        qlist.append(Queen(r, row))
+        for i in range(row, n):
+            tempresults = checkRow(qlist, i, n)
+            scores[results.index(r)] += len(tempresults)
+            tempresults.clear()
+        qlist.pop()
+    counter = len(scores)
+#    print("Results:")
+#    print(results)
+    for j in range(counter):
+        maxval = 0
+        for i in scores:
+            if(i > maxval):
+                maxval = i
+        currentindex = scores.index(maxval)
+        finalscores.insert(0, results[currentindex])
+        scores.pop(currentindex)
+        results.pop(currentindex)
+    return finalscores   
+        
 
-def newMethod(n, cranks, crow, qlist):
+def testingAlgorithm(n, cranks, crow, qlist):
     
     if(len(qlist) == n):
         print("Working Configuration of Queens Found When Starting Position = " + queenList[0].printQueen() + "! Sequence: ")
@@ -85,16 +115,14 @@ def newMethod(n, cranks, crow, qlist):
         qlist.pop()
         return False
     qlist.append(Queen(cranks[0], crow))
-    print("Now testing x = " + str(cranks[0]))
+#    print("Now testing x = " + str(cranks[0]))
     nextranks = checkRow(qlist, crow + 1, n)
-    if(newMethod(n, heuristic1(nextranks, crow + 1, n), crow + 1, qlist) == True):
+    if(testingAlgorithm(n, heuristic2(nextranks, crow + 1, n, qlist), crow + 1, qlist) == True):
         return True
     else:  
         cranks.pop(0)
-        newMethod(n, cranks, crow, qlist)
-        
-    if(len(qlist) == n):
-        return True
+        return testingAlgorithm(n, cranks, crow, qlist)
+  
    
 
    
@@ -102,16 +130,17 @@ def newMethod(n, cranks, crow, qlist):
     
 
 
+start = timeit.default_timer()
 
-
-n = int(input("Enter a number: "))
+#n = int(input("Enter a number: "))
+n = 24
 queenList = []
 for x in range(math.ceil(n/2)):
     i = 1
     print("Testing for starting queen at (" + str(x) + ", 0)")
     queenList.append(Queen(x, 0))
     startranks = checkRow(queenList, i, n)
-    if(newMethod(n, heuristic1(startranks, i, n), 1, queenList) != True):
+    if(testingAlgorithm(n, heuristic2(startranks, i, n, queenList), 1, queenList) != True):
         print("No Working Config Found")
    # runtime(n, i)
     queenList.clear()
@@ -120,4 +149,5 @@ for x in range(math.ceil(n/2)):
     print("")
     print("")
 
-
+stop = timeit.default_timer()
+print(stop - start) 
