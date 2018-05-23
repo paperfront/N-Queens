@@ -2,9 +2,14 @@ from Queen import Queen
 import math
 import timeit
 
-# def runtime(n, i):
+# def testQueens(n, i):
     
-    
+######################################
+# Deprecated Original Testing Method #
+######################################
+
+##################################################################################################################
+      
     
   #  currentResults = checkRow(queenList, i, n)
     
@@ -38,6 +43,18 @@ import timeit
    #     return False
         
 
+
+##################################################################################################################  
+
+
+
+
+######################################
+#  #
+######################################
+
+
+
 def checkRow(queens, row, n):
     results = []
     newqueens = queens
@@ -64,6 +81,11 @@ def checkRow(queens, row, n):
 
 
 def heuristic1(actualResults, i, n, qlist):
+    
+#############################################
+# Maximum Distance Between Consecutive Rows #
+#############################################
+    
 #    print("Actual Results: ")
 #    print(actualResults)
 
@@ -74,6 +96,11 @@ def heuristic1(actualResults, i, n, qlist):
 
 
 def heuristic2(results, row, n, qlist):
+
+#############################################################################
+# Scan All Future Rows and Return Option With Least Amount of Cells Blocked #
+#############################################################################
+
     
 #    print("Actual Results: ")
 #    print(results)
@@ -101,6 +128,38 @@ def heuristic2(results, row, n, qlist):
         scores.pop(currentindex)
         results.pop(currentindex)
     return finalscores   
+
+
+
+def heuristic3(results, row, n, qlist):
+
+################################################
+# Scan Next Row and Return Least Cells Blocked #
+################################################
+    scores = []
+    finalscores = []
+    for r in results:
+        scores.append(0)
+        qlist.append(Queen(r, row))
+        tempresults = checkRow(qlist, row, n)
+        scores[results.index(r)] += len(tempresults)
+        tempresults.clear()
+        qlist.pop()
+    counter = len(scores)
+#    print("Results:")
+#    print(results)
+    for j in range(counter):
+        maxval = 0
+        for i in scores:
+            if(i > maxval):
+                maxval = i
+        currentindex = scores.index(maxval)
+        finalscores.insert(0, results[currentindex])
+        scores.pop(currentindex)
+        results.pop(currentindex)
+    return finalscores
+
+
         
 
 def testingAlgorithm(n, cranks, crow, qlist):
@@ -115,9 +174,18 @@ def testingAlgorithm(n, cranks, crow, qlist):
         qlist.pop()
         return False
     qlist.append(Queen(cranks[0], crow))
+
+    
 #    print("Now testing x = " + str(cranks[0]))
+
+
     nextranks = checkRow(qlist, crow + 1, n)
-    if(testingAlgorithm(n, heuristic2(nextranks, crow + 1, n, qlist), crow + 1, qlist) == True):
+
+    inranks = heuristic1(nextranks, crow + 1, n, qlist)
+#    inranks = heuristic2(nextranks, crow + 1, n, qlist)
+#    inranks = heuristic3(nextranks, crow + 1, n, qlist)
+    
+    if(testingAlgorithm(n, inranks, crow + 1, qlist) == True):
         return True
     else:  
         cranks.pop(0)
@@ -130,17 +198,26 @@ def testingAlgorithm(n, cranks, crow, qlist):
     
 
 
+
+
+n = int(input("Enter a number: "))
+
+
 start = timeit.default_timer()
 
-#n = int(input("Enter a number: "))
-n = 24
 queenList = []
 for x in range(math.ceil(n/2)):
     i = 1
     print("Testing for starting queen at (" + str(x) + ", 0)")
     queenList.append(Queen(x, 0))
     startranks = checkRow(queenList, i, n)
-    if(testingAlgorithm(n, heuristic2(startranks, i, n, queenList), 1, queenList) != True):
+
+    inranks = heuristic1(startranks, i, n, queenList)
+#    inranks = heuristic2(startranks, i, n, queenList)
+#    inranks = heuristic3(startranks, i, n, queenList)
+
+    
+    if(testingAlgorithm(n, inranks, 1, queenList) != True):
         print("No Working Config Found")
    # runtime(n, i)
     queenList.clear()
