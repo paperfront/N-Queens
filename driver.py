@@ -234,7 +234,7 @@ for x in range(math.ceil(n/2)):
 stop = timeit.default_timer()
 print(stop - start)
 timeslist.append(stop - start)
-
+quitprog = input("Type in a value and hit enter to close program ")
 
 
 
