@@ -49,9 +49,9 @@ import timeit
 
 
 
-######################################
-#  #
-######################################
+#############################################################
+# Returns a list of spaces that are blocked for a given row #
+#############################################################
 
 
 
@@ -181,9 +181,9 @@ def testingAlgorithm(n, cranks, crow, qlist):
 
     nextranks = checkRow(qlist, crow + 1, n)
 
-    inranks = heuristic1(nextranks, crow + 1, n, qlist)
+#    inranks = heuristic1(nextranks, crow + 1, n, qlist)
 #    inranks = heuristic2(nextranks, crow + 1, n, qlist)
-#    inranks = heuristic3(nextranks, crow + 1, n, qlist)
+    inranks = heuristic3(nextranks, crow + 1, n, qlist)
     
     if(testingAlgorithm(n, inranks, crow + 1, qlist) == True):
         return True
@@ -202,6 +202,11 @@ def testingAlgorithm(n, cranks, crow, qlist):
 
 n = int(input("Enter a number: "))
 
+# n = 4
+
+timeslist = []
+
+
 
 start = timeit.default_timer()
 
@@ -212,9 +217,9 @@ for x in range(math.ceil(n/2)):
     queenList.append(Queen(x, 0))
     startranks = checkRow(queenList, i, n)
 
-    inranks = heuristic1(startranks, i, n, queenList)
-#    inranks = heuristic2(startranks, i, n, queenList)
-#    inranks = heuristic3(startranks, i, n, queenList)
+#   inranks = heuristic1(startranks, i, n, queenList)
+#   inranks = heuristic2(startranks, i, n, queenList)
+    inranks = heuristic3(startranks, i, n, queenList)
 
     
     if(testingAlgorithm(n, inranks, 1, queenList) != True):
@@ -227,4 +232,9 @@ for x in range(math.ceil(n/2)):
     print("")
 
 stop = timeit.default_timer()
-print(stop - start) 
+print(stop - start)
+timeslist.append(stop - start)
+
+
+
+
